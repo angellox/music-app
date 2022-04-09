@@ -1,0 +1,33 @@
+version: '3'
+services:
+  backend:
+    container_name: backend
+    image: img-backend
+    env_file: ./backend/.env
+    ports:
+      - "4000:4000"
+    networks:
+      - mern
+    volumes:
+      - ./backend/:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+
+  mongo:
+    container_name: mongodb
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - mern
+    volumes:
+      - mongo-data:/data/db
+    
+networks:
+  mern:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local

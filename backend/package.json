@@ -1,0 +1,30 @@
+{
+  "name": "music-app",
+  "version": "1.0.0",
+  "description": "This is the server side of music application and also contains API",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angellox/music-app.git"
+  },
+  "keywords": [
+    "music"
+  ],
+  "author": "José Ángel De La Cruz Sánchez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/angellox/music-app/issues"
+  },
+  "homepage": "https://github.com/angellox/music-app#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

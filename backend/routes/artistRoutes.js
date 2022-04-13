@@ -1,8 +1,8 @@
 import express from 'express';
-import { signup, profile, upload } from '../controllers/artistController.js'; 
+import { signup, profile } from '../controllers/artistController.js'; 
 const router = express.Router();
 
-router.post('/', upload.single('photo'), signup);
+router.post('/', signup);
 router.get('/profile', profile);
 
 

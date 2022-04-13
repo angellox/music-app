@@ -15,56 +15,61 @@ const fileFilter = async (req, file, callback) => {
     // Rejecting certain type of files (only supports jpeg, png)
     const { email } = req.body;
     const existUser = await Artist.findOne({ email });
-    
-    if(existUser) {
+
+    if (existUser) {
         callback(null, false);
-    } else if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+    } else if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
         callback(null, true);
     } else {
-        const error = new Error('File image not supported. Choose one in jpeg/png');
-        callback(error.message, false);
+        return callback(new Error('File image not supported. Choose one jpeg/png'), false);
     }
 }
-const upload = multer({ 
-    storage, 
+const upload = multer({
+    storage,
     fileFilter,
     limits: { fileSize: 1024 * 1024 * 1 } // Accepting 1MB for each photo, 
 });
+const uploadSimpleImage = upload.single('photo');
 
 const signup = async (req, res) => {
 
-    // Adding path file of profile picture to body obj
-    if(req.file) req.body.photo = req.file.path;
+    uploadSimpleImage(req, res, async err => {
 
-    // Reviewing duplicated users
-    const { email } = req.body;
-    const existUser = await Artist.findOne({ email });
+        // Adding path file of profile picture to body obj
+        if (req.file) req.body.photo = req.file.path;
 
-    if(existUser) {
-        const error = new Error('This user already exists');
-        return res.status(400).json({ msg: error.message });
-    }
+        // Reviewing duplicated users
+        const { email } = req.body;
+        const existUser = await Artist.findOne({ email });
 
-    try {
-        // Saving artist into DB
-        const artist = new Artist(req.body);
-        const savedArtist = await artist.save();
+        // If user already exists
+        if (existUser) {
+            const error = new Error('This user already exists');
+            return res.status(400).json({ msg: error.message });
+        }
+        // If image is not supported
+        if(err) {
+            return res.status(406).json({ msg: err.message });
+        }
 
-        res.json(savedArtist);
+        try {
+            // Saving artist into DB
+            const artist = new Artist(req.body);
 
-    } catch (error) {
-        console.log(error);
-    }
+            const savedArtist = await artist.save();
+            res.json(savedArtist);
 
-};  
+        } catch (error) {
+            console.log(error);
+        } 
+    });
+};
 
 const profile = (req, res) => {
     res.json({ msg: 'From API Artists Profiles' });
 };
 
-
 export {
     signup,
-    profile,
-    upload
+    profile
 }

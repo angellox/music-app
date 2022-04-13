@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import generateId from '../helpers/generateId.js';
 
 const artistSchema = mongoose.Schema({
     name: {
@@ -23,6 +24,10 @@ const artistSchema = mongoose.Schema({
     genre: {
         type: String,
         required: true
+    },
+    token: {
+        type: String,
+        default: generateId
     },
     accountConfirm: {
         type: Boolean,

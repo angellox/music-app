@@ -65,11 +65,38 @@ const signup = async (req, res) => {
     });
 };
 
+const confirmAccount = async (req, res) => {
+    const { token } = req.params;
+
+    const userToConfirm = await Artist.findOne({ token });
+
+    if(!userToConfirm){
+        const error = new Error('Token is invalid');
+        return res.status(404).json({ msg: error.message });
+    }
+
+    try {
+
+        userToConfirm.token = null;
+        userToConfirm.accountConfirm = true;
+
+        await userToConfirm.save();
+
+        res.json({ msg: 'User confirmed successfully!'});
+        
+    } catch (error) {
+        console.log(error);
+    }
+
+    
+};
+
 const profile = (req, res) => {
     res.json({ msg: 'From API Artists Profiles' });
 };
 
 export {
     signup,
-    profile
+    profile,
+    confirmAccount
 }

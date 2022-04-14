@@ -1,4 +1,4 @@
-This is a open source project that integrates all these technologies:
+This is an open source project that integrates all these technologies:
 
 - Mongo DB
 - Express 

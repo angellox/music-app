@@ -1,7 +1,10 @@
 // Importing models
 import Artist from "../models/Artist.js";
+// Importing internal libraries
+import generateJWT from "../helpers/generateJWT.js";
 // Importing external libraries
 import multer from 'multer';
+
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
@@ -95,8 +98,36 @@ const profile = (req, res) => {
     res.json({ msg: 'From API Artists Profiles' });
 };
 
+const authenticate = async (req, res) => {
+
+    const { email, password } = req.body;
+
+    // Verifiying user
+    const user = await Artist.findOne({ email });
+
+    if(!user) {
+        const error = new Error('This user does not exist.');
+        return res.status(403).json({ msg: error.message });
+    }
+
+    if(!user.accountConfirm) {
+        const error = new Error('Your account has not been confirmed. Try confirming it with your email.');
+        return res.status(403).json({ msg: error.message }); 
+    }
+
+    // Authenticating existing user
+    if( await user.checkPassword(password) ) {
+        res.json({ token: generateJWT(user._id) });
+    } else {
+        const error = new Error('Password is incorrect.');
+        return res.status(403).json({ msg: error.message });
+    }
+    
+};
+
 export {
     signup,
     profile,
-    confirmAccount
+    confirmAccount,
+    authenticate
 }

@@ -1,7 +1,9 @@
 // Importing models
 import Artist from "../models/Artist.js";
+import Listener from "../models/Listener.js";
 // Importing internal libraries
 import generateJWT from "../helpers/generateJWT.js";
+import generateId from "../helpers/generateId.js";
 // Importing external libraries
 import multer from 'multer';
 
@@ -42,7 +44,7 @@ const signup = async (req, res) => {
         if (req.file) req.body.photo = req.file.path;
 
         // Reviewing duplicated users
-        const { email } = req.body;
+        const { email, genre } = req.body;
         const existUser = await Artist.findOne({ email });
 
         // If user already exists
@@ -56,12 +58,16 @@ const signup = async (req, res) => {
         }
 
         try {
-            // Saving artist into DB
-            const artist = new Artist(req.body);
-
-            const savedArtist = await artist.save();
-            res.json(savedArtist);
-
+            // Saving artist/listener into DB
+            let obj;
+            if(genre) {
+                const artist = new Artist(req.body);
+                obj = await artist.save();
+            } else {
+                const listener = new Listener(req.body);
+                obj = await listener.save(); 
+            }
+            res.json(obj);
         } catch (error) {
             console.log(error);
         } 
@@ -69,53 +75,51 @@ const signup = async (req, res) => {
 };
 
 const confirmAccount = async (req, res) => {
-    const { token } = req.params;
+    const { rol, token } = req.params;
+    let obj;
 
-    const userToConfirm = await Artist.findOne({ token });
+    obj = rol === 'artist' ? await Artist.findOne({ token }) : rol === 'listener' ? await Listener.findOne({ token }) : null;
 
-    if(!userToConfirm){
+    if(!obj){
         const error = new Error('Token is invalid');
         return res.status(404).json({ msg: error.message });
     }
 
     try {
 
-        userToConfirm.token = null;
-        userToConfirm.accountConfirm = true;
-
-        await userToConfirm.save();
-
+        obj.token = null;
+        obj.accountConfirm = true;
+        await obj.save();
         res.json({ msg: 'User confirmed successfully!'});
         
     } catch (error) {
         console.log(error);
     }
 
-    
-};
-
-const profile = (req, res) => {
-    res.json({ msg: 'From API Artists Profiles' });
 };
 
 const authenticate = async (req, res) => {
 
     const { email, password } = req.body;
-
+    let user = {};
     // Verifiying user
-    const user = await Artist.findOne({ email });
+    let obj;
 
+    obj = await Promise.all([Artist.findOne({ email }), Listener.findOne({ email })]);
+    user = obj[0] ? obj[0] : obj[1];
+    // Verifying if user exits in DB.
     if(!user) {
         const error = new Error('This user does not exist.');
         return res.status(403).json({ msg: error.message });
     }
 
+    // Verifying if account is confirmed 
     if(!user.accountConfirm) {
         const error = new Error('Your account has not been confirmed. Try confirming it with your email.');
         return res.status(403).json({ msg: error.message }); 
     }
 
-    // Authenticating existing user
+    // Validating user with its password
     if( await user.checkPassword(password) ) {
         res.json({ token: generateJWT(user._id) });
     } else {
@@ -125,9 +129,70 @@ const authenticate = async (req, res) => {
     
 };
 
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    
+    const existsArtist = await Artist.findOne({ email });
+    console.log(existsArtist);
+
+    if(!existsArtist) {
+        const error = new Error('User does not exist');
+        return res.status(400).json({ msg: error.message });
+    }
+
+    try {
+        existsArtist.token = generateId();
+        await existsArtist.save();
+        res.json({ msg: 'We\'ve sent a message to your email. Verify it!' });
+    } catch (error) {
+        console.log(error);
+    }
+};
+const checkToken = async (req, res) => {
+    const { token } = req.params;
+    const isArtistValid = await Artist.findOne({ token });
+
+    if(isArtistValid) {
+        res.json({ msg: 'Token valid and user exists' });
+    } else {
+        const e = new Error('Token is not valid. Verify your account');
+        return res.status(404).json({ msg: e.message });
+    }
+};
+const setNewPassword = async (req, res) => {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+    
+    const artistChanged = await Artist.findOne({ token });
+
+    if(!artistChanged) {
+        const error = new Error('An error occurred with your request');
+        return res.status(400).json({ msg: error.message });
+    }
+
+    try {
+        artistChanged.password = newPassword;
+        artistChanged.token = null;
+        await artistChanged.save();
+
+        res.json({ msg: 'Password has been changed correctly. Log in!' });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+// Displaying user's session (Artist or Listener)
+const profile = (req, res) => {
+    const { artist } = req;
+    res.json({ profile: artist });
+};
+
 export {
     signup,
     profile,
     confirmAccount,
-    authenticate
+    authenticate,
+    forgotPassword,
+    checkToken,
+    setNewPassword
 }

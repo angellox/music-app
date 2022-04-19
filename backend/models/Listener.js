@@ -1,35 +1,38 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 // Internal Libraries
 import generateId from '../helpers/generateId.js';
 import generateHash from '../helpers/generateHash.js';
 
-const artistSchema = mongoose.Schema({
+const listenerSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true,
-        trim: true
+        required: true
     },
     email: {
         type: String,
         required: true,
-        unique: true,
-        trim: true
-    },
+        unique: true
+    }, 
     password: {
         type: String,
         required: true
+    },
+    likedSongs: {
+        type: Number,
+        default: 0
     },
     photo: {
         type: String,
         default: null
     },
+    plays: {
+        type: Number,
+        default: 0
+    },
     isArtist: {
         type: Boolean,
-        default: true
-    },
-    genre: {
-        type: String,
-        required: true
+        default: false
     },
     token: {
         type: String,
@@ -42,11 +45,11 @@ const artistSchema = mongoose.Schema({
 });
 
 // Hashing passwords before inserting into DB
-artistSchema.pre('save', generateHash);
-artistSchema.methods.checkPassword = async function(passwordUser) {
+listenerSchema.pre('save', generateHash);
+listenerSchema.methods.checkPassword = async function(passwordUser) {
     return await bcrypt.compare(passwordUser, this.password);
 };
 
-const Artist = mongoose.model('Artist', artistSchema);
+const Listener = mongoose.model('Listener', listenerSchema);
 
-export default Artist;
+export default Listener;

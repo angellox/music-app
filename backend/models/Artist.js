@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 // Internal Libraries
 import generateId from '../helpers/generateId.js';
 import generateHash from '../helpers/generateHash.js';

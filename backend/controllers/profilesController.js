@@ -45,10 +45,13 @@ const signup = async (req, res) => {
 
         // Reviewing duplicated users
         const { email, genre } = req.body;
-        const existUser = await Artist.findOne({ email });
+        let user = {};
+        let obj;
+        obj = await Promise.all([Artist.findOne({ email }), Listener.findOne({ email })]);
+        user = obj[0] ? obj[0] : obj[1];
 
         // If user already exists
-        if (existUser) {
+        if (user) {
             const error = new Error('This user already exists');
             return res.status(400).json({ msg: error.message });
         }
@@ -123,7 +126,7 @@ const authenticate = async (req, res) => {
     if( await user.checkPassword(password) ) {
         res.json({ token: generateJWT(user._id) });
     } else {
-        const error = new Error('Password is incorrect.');
+        const error = new Error('Email/Password are incorrect.');
         return res.status(403).json({ msg: error.message });
     }
     
@@ -131,28 +134,38 @@ const authenticate = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
     const { email } = req.body;
-    
-    const existsArtist = await Artist.findOne({ email });
-    console.log(existsArtist);
+    // Verifiying user
+    let user = {};
+    let obj;
 
-    if(!existsArtist) {
+    obj = await Promise.all([Artist.findOne({ email }), Listener.findOne({ email })]);
+    user = obj[0] ? obj[0] : obj[1];
+
+    if(!user) {
         const error = new Error('User does not exist');
         return res.status(400).json({ msg: error.message });
     }
 
+    // Verifying if account is confirmed 
+    if(!user.accountConfirm) {
+        const error = new Error('Your account has not been confirmed. Try confirming it with your email.');
+        return res.status(403).json({ msg: error.message }); 
+    }
+
     try {
-        existsArtist.token = generateId();
-        await existsArtist.save();
+        user.token = generateId();
+        await user.save();
         res.json({ msg: 'We\'ve sent a message to your email. Verify it!' });
     } catch (error) {
         console.log(error);
     }
 };
 const checkToken = async (req, res) => {
-    const { token } = req.params;
-    const isArtistValid = await Artist.findOne({ token });
+    const { rol, token } = req.params;
+    let obj;
+    obj = rol === 'artist' ? await Artist.findOne({ token }) : rol === 'listener' ? await Listener.findOne({ token }) : null;
 
-    if(isArtistValid) {
+    if(obj) {
         res.json({ msg: 'Token valid and user exists' });
     } else {
         const e = new Error('Token is not valid. Verify your account');
@@ -160,20 +173,21 @@ const checkToken = async (req, res) => {
     }
 };
 const setNewPassword = async (req, res) => {
-    const { token } = req.params;
+    const { rol, token } = req.params;
     const { newPassword } = req.body;
-    
-    const artistChanged = await Artist.findOne({ token });
 
-    if(!artistChanged) {
+    let obj;
+    obj = rol === 'artist' ? await Artist.findOne({ token }) : rol === 'listener' ? await Listener.findOne({ token }) : null;
+
+    if(!obj) {
         const error = new Error('An error occurred with your request');
         return res.status(400).json({ msg: error.message });
     }
 
     try {
-        artistChanged.password = newPassword;
-        artistChanged.token = null;
-        await artistChanged.save();
+        obj.password = newPassword;
+        obj.token = null;
+        await obj.save();
 
         res.json({ msg: 'Password has been changed correctly. Log in!' });
     } catch (error) {

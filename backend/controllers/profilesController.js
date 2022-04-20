@@ -62,7 +62,6 @@ const signup = async (req, res) => {
 
         try {
             // Saving artist/listener into DB
-            let obj;
             if(genre) {
                 const artist = new Artist(req.body);
                 obj = await artist.save();
@@ -79,20 +78,20 @@ const signup = async (req, res) => {
 
 const confirmAccount = async (req, res) => {
     const { rol, token } = req.params;
-    let obj;
+    let user;
 
-    obj = rol === 'artist' ? await Artist.findOne({ token }) : rol === 'listener' ? await Listener.findOne({ token }) : null;
+    user = rol === 'artist' ? await Artist.findOne({ token }) : rol === 'listener' ? await Listener.findOne({ token }) : null;
 
-    if(!obj){
+    if(!user){
         const error = new Error('Token is invalid');
         return res.status(404).json({ msg: error.message });
     }
 
     try {
 
-        obj.token = null;
-        obj.accountConfirm = true;
-        await obj.save();
+        user.token = null;
+        user.accountConfirm = true;
+        await user.save();
         res.json({ msg: 'User confirmed successfully!'});
         
     } catch (error) {
@@ -162,10 +161,10 @@ const forgotPassword = async (req, res) => {
 };
 const checkToken = async (req, res) => {
     const { rol, token } = req.params;
-    let obj;
-    obj = rol === 'artist' ? await Artist.findOne({ token }) : rol === 'listener' ? await Listener.findOne({ token }) : null;
+    let user;
+    user = rol === 'artist' ? await Artist.findOne({ token }) : rol === 'listener' ? await Listener.findOne({ token }) : null;
 
-    if(obj) {
+    if(user) {
         res.json({ msg: 'Token valid and user exists' });
     } else {
         const e = new Error('Token is not valid. Verify your account');
@@ -176,18 +175,18 @@ const setNewPassword = async (req, res) => {
     const { rol, token } = req.params;
     const { newPassword } = req.body;
 
-    let obj;
-    obj = rol === 'artist' ? await Artist.findOne({ token }) : rol === 'listener' ? await Listener.findOne({ token }) : null;
+    let user;
+    user = rol === 'artist' ? await Artist.findOne({ token }) : rol === 'listener' ? await Listener.findOne({ token }) : null;
 
-    if(!obj) {
+    if(!user) {
         const error = new Error('An error occurred with your request');
         return res.status(400).json({ msg: error.message });
     }
 
     try {
-        obj.password = newPassword;
-        obj.token = null;
-        await obj.save();
+        user.password = newPassword;
+        user.token = null;
+        await user.save();
 
         res.json({ msg: 'Password has been changed correctly. Log in!' });
     } catch (error) {

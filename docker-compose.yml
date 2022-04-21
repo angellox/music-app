@@ -1,5 +1,18 @@
 version: '3'
 services:
+  frontend:
+    container_name: frontend
+    image: img-frontend
+    stdin_open: true
+    ports:
+      - "3000:3000"
+      - "3010:3010"
+    networks:
+      - mern
+    volumes:
+      - ./frontend/:/usr/src/app
+      - /usr/src/app/node_modules
+
   backend:
     container_name: backend
     image: img-backend

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from "./config/db.js";
 // Routes
 import profileRoutes from './routes/profileRoutes.js';
+import songsRoutes from './routes/songsRoutes.js';
 
 const app = express();
 // Body parser
@@ -13,7 +14,8 @@ dotenv.config();
 // Connection to MongoDB
 connectDB();
 // Getting data from APIs
-app.use('/api/music', profileRoutes);
+app.use('/api/profiles', profileRoutes);
+app.use('/api/songs', songsRoutes);
 
 // Setting up ports for listening to . . .
 const port = process.env.PORT || 4000;

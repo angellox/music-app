@@ -7,7 +7,7 @@ import {
     forgotPassword, 
     checkToken, 
     setNewPassword
-} from '../controllers/profilesController.js'; 
+} from '../controllers/profileController.js'; 
 
 import checkAuth from '../middleware/authMiddleware.js';
 
@@ -16,10 +16,10 @@ const router = express.Router();
 router.post('/', signup);
 router.get('/confirm/:rol/:token', confirmAccount);
 router.post('/login', authenticate);
-router.route('/forgotten-password/:rol/:token').get(checkToken).post(setNewPassword);
 router.post('/forgotten-password', forgotPassword);
+router.route('/forgotten-password/:rol/:token').get(checkToken).post(setNewPassword);
 
 // Private area (for access users only)
-router.get('/profile', checkAuth, profile);
+router.get('/user/:rol', checkAuth, profile);
 
 export default router;

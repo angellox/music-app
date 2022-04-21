@@ -7,7 +7,6 @@ import generateId from "../helpers/generateId.js";
 // Importing external libraries
 import multer from 'multer';
 
-
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, './uploads/images/');

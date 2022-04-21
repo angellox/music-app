@@ -1,8 +1,12 @@
+import { compareSync } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Artist from '../models/Artist.js';
+import Listener from '../models/Listener.js';
 
 const checkAuth = async (req, res, next) => {
     
+    const { rol } = req.params;
+    console.log(rol);
     const { authorization } = req.headers;
     //console.log(authorization);
     let token;
@@ -13,7 +17,11 @@ const checkAuth = async (req, res, next) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             
             // Storing current session in node server
-            req.artist = await Artist.findById(decoded.id).select('-password -accountConfirm');
+            if(rol === 'artist') {
+                req.artist =  await Artist.findById(decoded.id).select('-password -accountConfirm');
+            } else {
+                req.listener = await Listener.findById(decoded.id).select('-password -accountConfirm');
+            }
             return next();
     
         } catch (error) {

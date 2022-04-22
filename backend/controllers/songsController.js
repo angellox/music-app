@@ -16,11 +16,11 @@ const storage = multer.diskStorage({
 });
 const fileFilter = async (req, file, callback) => {
     // Rejecting certain type of files (only supports mp3)
-    const sizeLimit = 1024 * 1024 * 20;
     if (file.mimetype === 'audio/mpeg') {
         callback(null, true);
     } else {
-        return callback(new Error('File song not supported. Choose one mp3'), false);
+        const e = new Error('File song not supported. Choose one mp3')
+        return callback(e, false);
     }
 }
 const upload = multer({

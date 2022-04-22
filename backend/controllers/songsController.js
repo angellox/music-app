@@ -4,6 +4,7 @@ import Song from '../models/Songs.js';
 import trunkId from '../helpers/trunkId.js';
 // Importing external libraries
 import multer from 'multer';
+import fs from 'fs';
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
@@ -124,9 +125,17 @@ const deleteSong = async (req, res) => {
     try {
         const nameSong = song.nameSong;
         const idSong = trunkId(song._id.toString());
+        const path = song.song;
 
         await song.deleteOne();
-        res.json({ msg: `Song: ${idSong} - ${nameSong} deleted successfully` });
+        fs.unlink(path, err => {
+            if (err){
+                const e = new Error('Song\'s Path not found');
+                return res.status(404).json({ msg: e.message });
+            }
+            res.json({ msg: `Song: ${idSong} - ${nameSong} deleted successfully` });
+        });
+        
     } catch (error) {
         console.log(error);
     }

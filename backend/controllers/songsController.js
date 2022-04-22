@@ -1,4 +1,8 @@
+// Importing models
 import Song from '../models/Songs.js';
+// Importing internal libraries
+import trunkId from '../helpers/trunkId.js';
+// Importing external libraries
 import multer from 'multer';
 
 const storage = multer.diskStorage({
@@ -49,11 +53,89 @@ const addSongs = (req, res) => {
     });
 };
 
-const getSongs = (req, res) => {
+const getSongs = async (req, res) => {
+    const songs = await Song.find().where('artist').equals(req.artist);
+    res.json(songs);
+};
 
+const getSong = async (req, res) => {
+    const { id } = req.params;
+    const song = await Song.findById(id);
+
+    // confirming an existing song
+    if(!song) {
+        const error = new Error('Song not found it :(');
+        return res.status(404).json({ msg: error.message });
+    }
+
+    // confirming that the logged artist has rights to delete his/her songs
+    if( song.artist._id.toString() !== req.artist._id.toString() ) {
+        const error = new Error('This action is not allowed!');
+        return res.status(404).json({ msg: error.message });
+    }
+
+    // All ok! Sending song to API
+    res.json(song);
+    
+};
+
+const updateSong = async (req, res) => {
+    const { id } = req.params;
+    const song = await Song.findById(id);
+
+    if(!song) {
+        const error = new Error('Song not found it :(');
+        return res.status(404).json({ msg: error.message });
+    } 
+
+    if( song.artist._id.toString() !== req.artist._id.toString() ) {
+        const error = new Error('This action is not allowed!');
+        return res.status(403).json({ msg: error.message });
+    }
+
+    // Updating data in a song
+    song.nameSong = req.body.nameSong || song.nameSong;
+    song.description = req.body.description || song.description;
+
+    try {
+        const songUpdated = await song.save();
+        res.json(songUpdated);
+    } catch(error) {
+        console.log(error);
+    }
+    
+}; 
+
+const deleteSong = async (req, res) => {
+    const { id } = req.params;
+    const song = await Song.findById(id);
+
+    if(!song) {
+        const error = new Error('Song not found it :(');
+        return res.status(404).json({ msg: error.message });
+    } 
+
+    if( song.artist._id.toString() !== req.artist._id.toString() ) {
+        const error = new Error('This action is not allowed by this user!');
+        return res.status(403).json({ msg: error.message });
+    }
+
+    // Deleting a song
+    try {
+        const nameSong = song.nameSong;
+        const idSong = trunkId(song._id.toString());
+
+        await song.deleteOne();
+        res.json({ msg: `Song: ${idSong} - ${nameSong} deleted successfully` });
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 export {
     addSongs,
-    getSongs
+    getSongs,
+    getSong,
+    updateSong,
+    deleteSong
 }

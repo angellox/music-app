@@ -1,0 +1,311 @@
+{
+	"info": {
+		"_postman_id": "f6e8d85b-0d2e-4f25-9b2d-9c8fe71e4695",
+		"name": "music-app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Sign up users",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Pedrao Dusone",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "pedrao@correo.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "pass123",
+							"type": "text"
+						},
+						{
+							"key": "photo",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "genre",
+							"value": "Dubstep",
+							"type": "text",
+							"disabled": true
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_API}}/api/profiles",
+					"host": [
+						"{{URL_API}}"
+					],
+					"path": [
+						"api",
+						"profiles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get profiles",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL_API}}/api/profiles/user/listener",
+					"host": [
+						"{{URL_API}}"
+					],
+					"path": [
+						"api",
+						"profiles",
+						"user",
+						"listener"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirming artists",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL_API}}/api/profiles/confirm/artist/8nol0m1kuvg1g14pel8n",
+					"host": [
+						"{{URL_API}}"
+					],
+					"path": [
+						"api",
+						"profiles",
+						"confirm",
+						"artist",
+						"8nol0m1kuvg1g14pel8n"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirming listeners",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL_API}}/api/profiles/confirm/listener/aeds7v6toco1g14qhroh",
+					"host": [
+						"{{URL_API}}"
+					],
+					"path": [
+						"api",
+						"profiles",
+						"confirm",
+						"listener",
+						"aeds7v6toco1g14qhroh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authenticate users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"angelcruz@correo.com\",\n    \"password\": \"pass123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_API}}/api/profiles/login",
+					"host": [
+						"{{URL_API}}"
+					],
+					"path": [
+						"api",
+						"profiles",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve passwords",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"mares3000@correo.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_API}}/api/music/forgotten-password",
+					"host": [
+						"{{URL_API}}"
+					],
+					"path": [
+						"api",
+						"music",
+						"forgotten-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check tokens by forgotten pass",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL_API}}/api/music/forgotten-password/listener/a06om80fguo1g147kqan",
+					"host": [
+						"{{URL_API}}"
+					],
+					"path": [
+						"api",
+						"music",
+						"forgotten-password",
+						"listener",
+						"a06om80fguo1g147kqan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set new passwords",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"newPassword\": \"passnew\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_API}}/api/music/forgotten-password/listener/a06om80fguo1g147kqan",
+					"host": [
+						"{{URL_API}}"
+					],
+					"path": [
+						"api",
+						"music",
+						"forgotten-password",
+						"listener",
+						"a06om80fguo1g147kqan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add songs",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "song",
+							"type": "file",
+							"src": "/Users/angellox_o/Music/South Fuji (SWOG Mashup).mp3"
+						},
+						{
+							"key": "nameSong",
+							"value": "South Fuji",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This masterpiece means too much for me and my dearling. I hope you enyoy it like me and in the not too distant future I will make another one.",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_API}}/api/songs",
+					"host": [
+						"{{URL_API}}"
+					],
+					"path": [
+						"api",
+						"songs"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "URL_API",
+			"value": "http://localhost:4000"
+		}
+	]
+}

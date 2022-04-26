@@ -13,10 +13,10 @@ import checkAuth from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 // Public area
-router.post('/', signup);
-router.get('/confirm/:rol/:token', confirmAccount);
-router.post('/login', authenticate);
+router.post('/', authenticate);
+router.post('/sign-up', signup);
 router.post('/forgotten-password', forgotPassword);
+router.get('/confirm/:rol/:token', confirmAccount);
 router.route('/forgotten-password/:rol/:token').get(checkToken).post(setNewPassword);
 
 // Private area (for access users only)

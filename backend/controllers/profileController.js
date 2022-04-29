@@ -1,9 +1,10 @@
 // Importing models
-import Artist from "../models/Artist.js";
-import Listener from "../models/Listener.js";
+import Artist from '../models/Artist.js';
+import Listener from '../models/Listener.js';
 // Importing internal libraries
-import generateJWT from "../helpers/generateJWT.js";
-import generateId from "../helpers/generateId.js";
+import generateJWT from '../helpers/generateJWT.js';
+import generateId from '../helpers/generateId.js';
+import emailSending from '../helpers/emailSending.js';
 // Importing external libraries
 import multer from 'multer';
 
@@ -43,7 +44,7 @@ const signup = async (req, res) => {
         if (req.file) req.body.photo = req.file.path;
 
         // Reviewing duplicated users
-        const { email, genre } = req.body;
+        const { name, email, genre } = req.body;
         let user = {};
         let obj;
         obj = await Promise.all([Artist.findOne({ email }), Listener.findOne({ email })]);
@@ -68,6 +69,15 @@ const signup = async (req, res) => {
                 const listener = new Listener(req.body);
                 obj = await listener.save(); 
             }
+
+            //Sending email
+            emailSending({
+                email,
+                name,
+                token: obj.token,
+                rol: obj.isArtist
+            });
+
             res.json(obj);
         } catch (error) {
             console.log(error);

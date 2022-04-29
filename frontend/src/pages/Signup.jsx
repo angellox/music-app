@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Alert from '../components/Alert';
 import toast, { Toaster } from 'react-hot-toast';
+import axios from 'axios';
+// Own components
+import Alert from '../components/Alert';
 
 const Signup = () => {
 
@@ -9,14 +11,14 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
-  const [image, setImage] = useState();
+  const [photo, setPhoto] = useState();
   //const [isImagePicked, setIsImagePicked] = useState(false);
   const [genre, setGenre] = useState('');
 
   const [alert, setAlert] = useState({});
 
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
     
     if([name, email, password, repeatPassword].includes('')) {
@@ -34,6 +36,29 @@ const Signup = () => {
       return;
     }
 
+    // Creating an user in API
+    try {
+      const data = new FormData();
+      const url = 'http://localhost:4000/api/profiles/sign-up';
+      data.append('name', name);
+      data.append('email', email);
+      data.append('password', password);
+      data.append('photo', photo);
+      data.append('genre', genre);
+      await axios.post(url, data);
+      
+      // Sending message to customer
+      setAlert({
+        msg: 'Cuenta creada exitosamente. Revise su email',
+        error: false
+      });
+    } catch (error) {
+      setAlert({
+        msg: error.response.data.msg,
+        error: true
+      })
+    }
+
   };
 
   return (
@@ -48,11 +73,15 @@ const Signup = () => {
           <Alert alert={alert}></Alert>
 
           <form onSubmit={handleSubmit}>
+            <div className='text-sm mb-2'>
+              <span className='text-red-700 font-bold'>* </span>Please, fill the mandatory fields
+            </div>
+
             <div>
               <label
                 className='uppercase text-2xl block font-bold text-zinc-700'
               >
-                Name
+                Name <span className='text-red-700 font-bold text-sm'>*</span>
               </label>
               <input 
                 type="text" 
@@ -67,7 +96,7 @@ const Signup = () => {
               <label
                 className='uppercase text-2xl block font-bold text-zinc-700'
               >
-                Email
+                Email <span className='text-red-700 font-bold text-sm'>*</span>
               </label>
               <input 
                 type="email" 
@@ -82,7 +111,7 @@ const Signup = () => {
               <label
                 className='uppercase text-2xl block font-bold text-zinc-700'
               >
-                Password
+                Password <span className='text-red-700 font-bold text-sm'>*</span>
               </label>
               <input 
                 type="password" 
@@ -97,7 +126,7 @@ const Signup = () => {
               <label
                 className='uppercase text-2xl block font-bold text-zinc-700'
               >
-                Repeat your password
+                Repeat your password <span className='text-red-700 font-bold text-sm'>*</span>
               </label>
               <input 
                 type="password" 
@@ -119,7 +148,7 @@ const Signup = () => {
                 accept="image/png, image/jpeg"
                 placeholder="Upload an image jpeg/png. No more than 1MB"
                 className='text-sm border-b-2 w-full p-3 border-zinc-300 outline-none focus:border-zinc-400 transition-all font-light mt-3 bg-zinc-100 rounded-xl file:mr-4 file:rounded-full file:border-0 file:font-bold file:bg-cream-600 file:text-white file:py-2 file:px-4 file:hover:bg-cream-700 file:hover:cursor-pointer'
-                
+                onChange={ e => setPhoto(e.target.files[0]) }
               />
             </div>
 
@@ -127,14 +156,14 @@ const Signup = () => {
               <label
                 className='uppercase text-2xl block font-bold text-zinc-700'
               >
-                Choose your genre
+                Choose your genre <span className='text-cream-600'>(just for artists)</span>
               </label>
               <select 
                 className='text-sm appearance-none block border-b-2 w-full p-3 border-zinc-300 outline-none focus:border-zinc-400 transition-all font-light mt-3 bg-zinc-100 rounded-xl'
                 value={genre}
                 onChange={ e => setGenre(e.target.value) }
               >
-                <option value="">-- I am NOT an artist (Leave this if not) --</option>
+                <option value="">-- I am NOT an artist --</option>
                 <option value="rock">Rock & Heavy Metal</option>
                 <option value="electronic">Electronic</option>
                 <option value="pop">Pop/Funk</option>

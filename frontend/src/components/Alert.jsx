@@ -4,27 +4,17 @@ import { useEffect } from 'react';
 const Alert = ({alert}) => {
 
     useEffect( () => {
-        const notify = () => {
-            if(alert.msg){
-                if(alert.error) {
-                    toast.error(alert.msg);
-                } else {
-                    toast.success(alert.msg);
-                }
+        if(Object.keys(alert).length === 0) return;
 
-                return;
-            }
-            
-            if(alert.promise) {
-                toast.promise(alert.promise, {
-                    loading: 'Loading ...',
-                    success: alert.promise.msg,
-                    error: 'Something occurs. Sorry!'
-                })
-            }
+        if(alert.error) {
+            toast.error(alert.msg);
+            return;
         }
-        notify();
-    }, [alert.msg]);
+
+        toast.success(alert.msg);
+        
+    }, [alert.error]);
+
 
   return (
       <div>

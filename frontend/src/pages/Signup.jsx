@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast';
-import axios from 'axios';
-// Own components
+import clientAxios from '../config/axios';
+// Internal components
 import Alert from '../components/Alert';
 
 const Signup = () => {
@@ -39,14 +38,20 @@ const Signup = () => {
     // Creating an user in API
     try {
       const data = new FormData();
-      const url = 'http://localhost:4000/api/profiles/sign-up';
+      const url = `/profiles/sign-up`;
       data.append('name', name);
       data.append('email', email);
       data.append('password', password);
       data.append('photo', photo);
       data.append('genre', genre);
-      await axios.post(url, data);
       
+      await clientAxios.post(url, data);
+      setName('');
+      setEmail('');
+      setPassword('');
+      setRepeatPassword('');
+      setPhoto();
+      setGenre('');
       // Sending message to customer
       setAlert({
         msg: 'Cuenta creada exitosamente. Revise su email',

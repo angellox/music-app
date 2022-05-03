@@ -5,6 +5,7 @@ import Listener from '../models/Listener.js';
 import generateJWT from '../helpers/generateJWT.js';
 import generateId from '../helpers/generateId.js';
 import emailSending from '../helpers/emailSending.js';
+import emailPasswords from '../helpers/emailPasswords.js';
 // Importing external libraries
 import multer from 'multer';
 
@@ -92,7 +93,7 @@ const confirmAccount = async (req, res) => {
     user = rol === 'artist' ? await Artist.findOne({ token }) : rol === 'listener' ? await Listener.findOne({ token }) : null;
 
     if(!user){
-        const error = new Error('Token is invalid');
+        const error = new Error('Error! This request has been done');
         return res.status(404).json({ msg: error.message });
     }
 
@@ -101,7 +102,7 @@ const confirmAccount = async (req, res) => {
         user.token = null;
         user.accountConfirm = true;
         await user.save();
-        res.json({ msg: 'User confirmed successfully!'});
+        res.json({ msg: 'User confirmed successfully!' });
         
     } catch (error) {
         console.log(error);
@@ -147,6 +148,7 @@ const forgotPassword = async (req, res) => {
     let obj;
 
     obj = await Promise.all([Artist.findOne({ email }), Listener.findOne({ email })]);
+    // Artist is obj[0] while Listener is obj[1]
     user = obj[0] ? obj[0] : obj[1];
 
     if(!user) {
@@ -163,6 +165,15 @@ const forgotPassword = async (req, res) => {
     try {
         user.token = generateId();
         await user.save();
+
+        // Sending email to client
+        emailPasswords({
+            email,
+            name: user.name,
+            token: user.token,
+            rol: user.isArtist
+        })
+
         res.json({ msg: 'We\'ve sent a message to your email. Verify it!' });
     } catch (error) {
         console.log(error);
@@ -197,7 +208,7 @@ const setNewPassword = async (req, res) => {
         user.token = null;
         await user.save();
 
-        res.json({ msg: 'Password has been changed correctly. Log in!' });
+        res.json({ msg: 'Password has been changed correctly. Log in ... ' });
     } catch (error) {
         console.log(error);
     }

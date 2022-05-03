@@ -15,7 +15,7 @@ dotenv.config();
 // Connection to MongoDB
 connectDB();
 // set up CORS Policy
-const allowedDomains = ['http://localhost:3000'];
+const allowedDomains = [process.env.FRONTEND_URL];
 const corsOptions = {
     origin: function(origin, cb) {
         if(allowedDomains.indexOf(origin) !== -1) {

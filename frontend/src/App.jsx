@@ -5,6 +5,7 @@ import AuthLayout from './layout/AuthLayout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgottenPassword from './pages/ForgottenPassword';
+import NewPassword from './pages/NewPassword';
 import ConfirmAccount from './pages/ConfirmAccount';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Route index element={<Login />}/>
             <Route path='sign-up' element={<Signup />}/>
             <Route path='forgotten-password' element={<ForgottenPassword />}/>
+            <Route path='forgotten-password/:rol/:token' element={<NewPassword />}/>
             <Route path='confirm/:rol/:token' element={<ConfirmAccount />}/>
         </Route>
       </Routes>

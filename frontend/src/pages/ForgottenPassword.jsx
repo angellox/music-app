@@ -1,6 +1,38 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+// Internal libraries
+import Alert from '../components/Alert';
+import clientAxios from '../config/axios';
 
 const ForgottenPassword = () => {
+
+  const [email, setEmail] = useState('');
+  const [alert, setAlert]  = useState({});
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+
+    if(email === '' || email.length < 6) {
+      setAlert({ msg: 'Email is required', error: true });
+      return;
+    }
+
+    try {
+
+      const { data } = await clientAxios.post('/profiles/forgotten-password', { email });
+      
+      setAlert({
+        msg: data.msg
+      });
+
+    } catch (error) {
+      setAlert({
+        msg: error.response.data.msg,
+        error: true
+      })
+    }
+  };
+
   return (
     <>
       <div>
@@ -9,8 +41,10 @@ const ForgottenPassword = () => {
         </h1>
       </div>
 
+      <Alert alert={alert}/>
+
       <div className='mt-10 md:mt-5 shadow-lg px-5 py-10 rounded-xl bg-white'>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             <label
               className='uppercase text-2xl block font-bold text-zinc-700'
@@ -21,6 +55,8 @@ const ForgottenPassword = () => {
               type="email"
               placeholder="Type your email"
               className='text-sm border-b-2 w-full p-3 border-zinc-300 outline-none focus:border-zinc-400 transition-all font-light mt-3 bg-zinc-100 rounded-xl'
+              value={email}
+              onChange={ e => setEmail(e.target.value) }
             />
           </div>
 

@@ -13,7 +13,7 @@ const Alert = ({alert}) => {
 
         toast.success(alert.msg);
         
-    }, [alert.error]);
+    }, [alert]);
 
 
   return (
@@ -21,7 +21,12 @@ const Alert = ({alert}) => {
         <Toaster 
             position="top-center"
             toastOptions={{
-                duration: 7000
+                duration: 5000,
+                style: {
+                    background: '#6B3557',
+                    color: '#ffffff',
+                    fontSize: '20px'
+                }
             }}
         />
       </div>  

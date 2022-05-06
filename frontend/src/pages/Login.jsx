@@ -1,6 +1,47 @@
-import { Link } from "react-router-dom";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthContext from '../context/AuthProvider';
+import useAuth from '../hooks/useAuth';
+// Internal libraries
+import Alert from '../components/Alert';
+import clientAxios from '../config/axios';
+
 
 const Login = () => {
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [alert, setAlert] = useState({});
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    
+    if([email, password].includes('')) {
+      setAlert({
+        msg: 'All fields are required',
+        error: true
+      });
+      return;
+    }
+
+    try {
+      const { data } = await clientAxios.post('/profiles', { email, password });
+      localStorage.setItem('MS_token_session', data.token);
+
+      // Here is where we need to redirect users to their accounts
+      //navigate('/admin');
+
+    } catch (error) {
+      setAlert({
+        msg: error.response.data.msg,
+        error: true
+      })
+    }
+
+  };
+
   return (
     <>
         <div>
@@ -9,8 +50,10 @@ const Login = () => {
           </h1>
         </div>
 
+        <Alert alert={alert} />
+
         <div className='mt-10 md:mt-5 shadow-lg px-5 py-10 rounded-xl bg-white'>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div>
               <label
                 className='uppercase text-2xl block font-bold text-zinc-700'
@@ -21,6 +64,8 @@ const Login = () => {
                 type="email" 
                 placeholder="Type your email"
                 className='text-sm border-b-2 w-full p-3 border-zinc-300 outline-none focus:border-zinc-400 transition-all font-light mt-3 bg-zinc-100 rounded-xl'
+                value={email}
+                onChange={ e => setEmail(e.target.value) }
               />
             </div>
 
@@ -34,6 +79,8 @@ const Login = () => {
                 type="password" 
                 placeholder="Type your password"
                 className='text-sm border-b-2 w-full p-3 border-zinc-300 outline-none focus:border-zinc-400 transition-all font-light mt-3 bg-zinc-100 rounded-xl'
+                value={password}
+                onChange={ e => setPassword(e.target.value) }
               />
             </div>
 

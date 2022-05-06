@@ -20,6 +20,6 @@ router.get('/confirm/:rol/:token', confirmAccount);
 router.route('/forgotten-password/:rol/:token').get(checkToken).post(setNewPassword);
 
 // Private area (for access users only)
-router.get('/user/:rol', checkAuth, profile);
+router.get('/users', checkAuth, profile);
 
 export default router;

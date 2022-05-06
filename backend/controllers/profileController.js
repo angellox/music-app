@@ -121,7 +121,7 @@ const authenticate = async (req, res) => {
     user = obj[0] ? obj[0] : obj[1];
     // Verifying if user exits in DB.
     if(!user) {
-        const error = new Error('This user does not exist.');
+        const error = new Error('This user does not exist. Try creating one!');
         return res.status(403).json({ msg: error.message });
     }
 
@@ -135,7 +135,7 @@ const authenticate = async (req, res) => {
     if( await user.checkPassword(password) ) {
         res.json({ token: generateJWT(user._id) });
     } else {
-        const error = new Error('Email/Password are incorrect.');
+        const error = new Error('Email or password are incorrect.');
         return res.status(403).json({ msg: error.message });
     }
     
@@ -216,8 +216,8 @@ const setNewPassword = async (req, res) => {
 
 // Displaying user's session (Artist or Listener)
 const profile = (req, res) => {
-    const { artist } = req;
-    res.json({ profile: artist });
+    const { user }  = req;
+    res.json(user);
 };
 
 export {

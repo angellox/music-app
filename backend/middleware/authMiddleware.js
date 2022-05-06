@@ -21,14 +21,8 @@ const checkAuth = async (req, res, next) => {
                 Artist.findById(decoded.id).select('-password -accountConfirm'),
                 Listener.findById(decoded.id).select('-password -accountConfirm')
             ]);
-            
-            if(user[0]) {
-                // It's artist
-                req.artist = user[0];
-            } else { 
-                // It's listener
-                req.listener = user[1];
-            }
+
+            req.user = user[0] ? user[0] : user[1];
             
             return next();
     

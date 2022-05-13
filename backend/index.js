@@ -15,18 +15,22 @@ dotenv.config();
 // Connection to MongoDB
 connectDB();
 // set up CORS Policy
-const allowedDomains = [process.env.FRONTEND_URL];
-const corsOptions = {
-    origin: function(origin, cb) {
-        if(allowedDomains.indexOf(origin) !== -1) {
-            // Origin allowed
-            cb(null, true);
-        } else {
-            cb(new Error('Not allowed by CORS Policy'));
+const policyCors = () => {
+    const allowedDomains = [process.env.FRONTEND_URL];
+    const corsOptions = {
+        origin: function(origin, cb) {
+            if(allowedDomains.indexOf(origin) !== -1) {
+                // Origin allowed
+                cb(null, true);
+            } else {
+                cb(new Error('Not allowed by CORS Policy'));
+            }
         }
-    }
-};
-app.use(cors(corsOptions));
+    }; 
+    app.use(cors(corsOptions));
+}
+// Comment this line for postman testings
+policyCors();
 // Getting data from APIs
 app.use('/api/profiles', profileRoutes);
 app.use('/api/songs', songsRoutes);

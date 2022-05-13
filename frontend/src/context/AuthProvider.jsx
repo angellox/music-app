@@ -12,7 +12,10 @@ const AuthProvider = ({children}) => {
         const authUser = async () => {
             const token = localStorage.getItem('MS_token_session');
 
-            if(!token) return
+            if(!token) {
+                setLoading(false);
+                return
+            }
 
             const config = {
                 headers: {
@@ -22,10 +25,8 @@ const AuthProvider = ({children}) => {
             }
 
             try {
-                if(!loading) {
-                    const { data } = await clientAxios('/profiles/users', config);
-                    setAuth(data);
-                }
+                const { data } = await clientAxios('/profiles/users', config);
+                setAuth(data);
             } catch (error) {
                 console.log(error.response.data.msg);
                 setAuth({});
@@ -35,14 +36,21 @@ const AuthProvider = ({children}) => {
         };
 
         authUser();
-    }, [loading]);
+    }, []);
+
+    const logOut = () => {
+        localStorage.removeItem('MS_token_session');
+        setAuth({})
+    };
 
     return (
         <AuthContext.Provider
             // Value is a prop that defines all states or components that are going to be available on all app
             value={{
                 auth,
-                setAuth
+                setAuth,
+                loading,
+                logOut
             }}
         >
             {children}

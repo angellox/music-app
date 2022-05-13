@@ -12,7 +12,8 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [alert, setAlert] = useState({});
-
+  
+  const { setAuth } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async e => {
@@ -29,9 +30,12 @@ const Login = () => {
     try {
       const { data } = await clientAxios.post('/profiles', { email, password });
       localStorage.setItem('MS_token_session', data.token);
+      setAuth(data);
 
-      // Here is where we need to redirect users to their accounts
-      //navigate('/admin');
+
+      if(data.isArtist) {
+        navigate('/artist');
+      }
 
     } catch (error) {
       setAlert({

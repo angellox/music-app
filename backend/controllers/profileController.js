@@ -133,7 +133,15 @@ const authenticate = async (req, res) => {
 
     // Validating user with its password
     if( await user.checkPassword(password) ) {
-        res.json({ token: generateJWT(user._id) });
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            photo: user.photo,
+            isArtist: user.isArtist,
+            genre: user.genre,
+            token: generateJWT(user._id)
+        });
     } else {
         const error = new Error('Email or password are incorrect.');
         return res.status(403).json({ msg: error.message });

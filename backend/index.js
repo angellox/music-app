@@ -10,6 +10,7 @@ import songsRoutes from './routes/songsRoutes.js';
 const app = express();
 // Body parser
 app.use(express.json());
+app.use(express.static('public'));
 // Reading enviroment vars
 dotenv.config();
 // Connection to MongoDB

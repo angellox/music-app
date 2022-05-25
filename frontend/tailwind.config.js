@@ -10,6 +10,7 @@ module.exports = {
       },
       colors: {
         'cream': {
+          500: '#CA7A8B',
           600: '#B4445C',
           700: '#B0434E'
         }

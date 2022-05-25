@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthProvider';
 import useAuth from '../hooks/useAuth';
@@ -13,7 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [alert, setAlert] = useState({});
   
-  const { setAuth } = useAuth();
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async e => {
@@ -32,7 +32,6 @@ const Login = () => {
       localStorage.setItem('MS_token_session', data.token);
       setAuth(data);
 
-
       if(data.isArtist) {
         navigate('/artist');
       }
@@ -43,8 +42,13 @@ const Login = () => {
         error: true
       })
     }
-
   };
+
+  useEffect(() => {
+    if(Object.keys(auth).length > 0) {
+      navigate('/artist');
+    }
+  },[auth]);
 
   return (
     <>
@@ -91,7 +95,7 @@ const Login = () => {
             <input 
               type='submit'
               value='Log in'
-              className='bg-cream-600 w-full rounded-xl py-1 px-10 uppercase font-bold text-white text-lg mt-5 hover:cursor-pointer hover:bg-cream-700 md:w-auto'
+              className='bg-cream-500 w-full rounded-xl py-1 px-10 uppercase font-bold text-white text-lg mt-5 hover:cursor-pointer hover:bg-cream-700 md:w-auto'
             />
           </form>
 

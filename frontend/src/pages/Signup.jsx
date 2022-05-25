@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import clientAxios from '../config/axios';
 // Internal components
 import Alert from '../components/Alert';
+import Genres from '../components/Genres';
 
 const Signup = () => {
 
@@ -11,7 +12,6 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
   const [photo, setPhoto] = useState();
-  //const [isImagePicked, setIsImagePicked] = useState(false);
   const [genre, setGenre] = useState('');
 
   const [alert, setAlert] = useState({});
@@ -38,14 +38,13 @@ const Signup = () => {
     // Creating an user in API
     try {
       const data = new FormData();
-      const url = `/profiles/sign-up`;
       data.append('name', name);
       data.append('email', email);
       data.append('password', password);
       data.append('photo', photo);
       data.append('genre', genre);
       
-      await clientAxios.post(url, data);
+      await clientAxios.post('/profiles/sign-up', data);
       setName('');
       setEmail('');
       setPassword('');
@@ -169,11 +168,7 @@ const Signup = () => {
                 onChange={ e => setGenre(e.target.value) }
               >
                 <option value="">-- I am NOT an artist --</option>
-                <option value="rock">Rock & Heavy Metal</option>
-                <option value="electronic">Electronic</option>
-                <option value="pop">Pop/Funk</option>
-                <option value="jazz">Jazz</option>
-                <option value="classic">Classic</option>
+                <Genres />
               </select>
             </div>
 

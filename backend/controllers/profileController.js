@@ -11,7 +11,7 @@ import multer from 'multer';
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, './uploads/images/');
+        callback(null, './public/images/');
     },
     filename: (req, file, callback) => {
         callback(null, file.fieldname + '-' + Date.now() + file.originalname);
@@ -42,7 +42,7 @@ const signup = async (req, res) => {
     uploadSimpleImage(req, res, async err => {
 
         // Adding path file of profile picture to body obj
-        if (req.file) req.body.photo = req.file.path;
+        if (req.file) req.body.photo = (req.file.path).substring(7);
 
         // Reviewing duplicated users
         const { name, email, genre } = req.body;

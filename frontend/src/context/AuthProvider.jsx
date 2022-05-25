@@ -11,17 +11,16 @@ const AuthProvider = ({children}) => {
     useEffect(() => {
         const authUser = async () => {
             const token = localStorage.getItem('MS_token_session');
-
-            if(!token) {
-                setLoading(false);
-                return
-            }
-
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
                 }
+            }
+
+            if(!token) {
+                setLoading(false);
+                return
             }
 
             try {
@@ -40,7 +39,7 @@ const AuthProvider = ({children}) => {
 
     const logOut = () => {
         localStorage.removeItem('MS_token_session');
-        setAuth({})
+        setAuth({});
     };
 
     return (

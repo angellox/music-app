@@ -8,7 +8,7 @@ import fs from 'fs';
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, './uploads/songs/');
+        callback(null, './public/songs/');
     },
     filename: (req, file, callback) => {
         callback(null, file.fieldname + '-' + Date.now() + '.mp3');
@@ -37,7 +37,7 @@ const addSongs = (req, res) => {
         if (req.file) req.body.song = req.file.path;
         
         const song = new Song(req.body);
-        song.artist = req.artist._id;
+        song.artist = req.user._id;
 
         // If song is not supported
         if(err) {
@@ -55,7 +55,7 @@ const addSongs = (req, res) => {
 };
 
 const getSongs = async (req, res) => {
-    const songs = await Song.find().where('artist').equals(req.artist);
+    const songs = await Song.find().where('artist').equals(req.user);
     res.json(songs);
 };
 
@@ -89,7 +89,7 @@ const updateSong = async (req, res) => {
         return res.status(404).json({ msg: error.message });
     } 
 
-    if( song.artist._id.toString() !== req.artist._id.toString() ) {
+    if( song.artist._id.toString() !== req.user._id.toString() ) {
         const error = new Error('This action is not allowed!');
         return res.status(403).json({ msg: error.message });
     }
@@ -116,7 +116,7 @@ const deleteSong = async (req, res) => {
         return res.status(404).json({ msg: error.message });
     } 
 
-    if( song.artist._id.toString() !== req.artist._id.toString() ) {
+    if( song.artist._id.toString() !== req.user._id.toString() ) {
         const error = new Error('This action is not allowed by this user!');
         return res.status(403).json({ msg: error.message });
     }

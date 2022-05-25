@@ -10,29 +10,32 @@ import ForgottenPassword from './pages/ForgottenPassword';
 import NewPassword from './pages/NewPassword';
 import ConfirmAccount from './pages/ConfirmAccount';
 import DashArtist from './pages/DashArtist';
-// Context
+// Context Providers
 import { AuthProvider } from './context/AuthProvider';
+import { SongsProvider } from './context/SongsProvider';
 
 function App() {
   
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
+        <SongsProvider>
+          <Routes>
 
-          <Route path='/' element={<AuthLayout />}>
-              <Route index element={<Login />}/>
-              <Route path='sign-up' element={<Signup />}/>
-              <Route path='forgotten-password' element={<ForgottenPassword />}/>
-              <Route path='forgotten-password/:rol/:token' element={<NewPassword />}/>
-              <Route path='confirm/:rol/:token' element={<ConfirmAccount />}/>
-          </Route>
+            <Route path='/' element={<AuthLayout />}>
+                <Route index element={<Login />}/>
+                <Route path='sign-up' element={<Signup />}/>
+                <Route path='forgotten-password' element={<ForgottenPassword />}/>
+                <Route path='forgotten-password/:rol/:token' element={<NewPassword />}/>
+                <Route path='confirm/:rol/:token' element={<ConfirmAccount />}/>
+            </Route>
 
-          <Route path='/artist' element={<ProfileLayout />}>
-              <Route index element={<DashArtist />}></Route>
-          </Route>
+            <Route path='/artist' element={<ProfileLayout />}>
+                <Route index element={<DashArtist />}></Route>
+            </Route>
 
-        </Routes>
+          </Routes>
+        </SongsProvider>
       </AuthProvider>
     </BrowserRouter>
   )

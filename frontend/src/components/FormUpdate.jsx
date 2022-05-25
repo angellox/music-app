@@ -1,30 +1,60 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // Import internal components
 import Genres from './Genres';
 import Alert from './Alert';
 
-const Form = ({ auth }) => {
+const FormUpdate = ({ auth, editProfile }) => {
 
     const [name, setName] = useState(auth.name);
     const [email, setEmail] = useState(auth.email);
     const [genre, setGenre] = useState(auth.genre);
+    const [isDisabled, setIsDisabled] = useState(true);
 
     const [alert, setAlert] = useState({});
+    const user = { id: auth._id, name, email, genre };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async e => {
         // Just to update user data
         e.preventDefault();
-
-        if ( auth.name === name && auth.email === email && auth.genre === genre ) {
+        
+        if([name, email, genre].includes('')){
             setAlert({
-                msg: 'All seem to be updated',
+                msg: 'There are empty field. Please fill correctly!',
                 error: true
-            })
+            });
             return;
         }
 
-        //console.log('Actualizando...');
+        const result = await editProfile(user);
+
+        if(!result.error) {
+            setAlert({
+                msg: 'Your changes were updated successfully',
+                error: false
+            });
+            return;
+        }
+
+        setAlert({
+            msg: result.msg,
+            error: true
+        });
     };
+
+    useEffect(() => {
+
+        if(
+            user.name !== auth.name || 
+            user.email !== auth.email || 
+            user.genre !== auth.genre
+        ){
+            setIsDisabled(false);
+            return;
+        }
+
+        setIsDisabled(true);
+        
+    }, [user]);
 
     return (
         <>
@@ -61,15 +91,17 @@ const Form = ({ auth }) => {
                     </div>
                 </div>
 
-                <input 
-                    className="bg-cream-500 text-white p-2 px-4 rounded-md hover:bg-cream-700 transition-all hover:cursor-pointer mt-10 float-right"
+                <button
+                    className={isDisabled ? `bg-cream-500 text-white p-2 px-4 rounded-md hover:bg-cream-700 transition-all mt-10 float-right hover:cursor-not-allowed` : `bg-cream-500 text-white p-2 px-4 rounded-md hover:bg-cream-700 transition-all mt-10 float-right hover:cursor-pointer` }
                     type="submit"
-                    value="Save changes"
-                />
+                    disabled={isDisabled}
+                >
+                    Save changes
+                </button>
             </form>
         </>
 
     )
 }
 
-export default Form;
+export default FormUpdate;

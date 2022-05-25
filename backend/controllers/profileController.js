@@ -228,6 +228,37 @@ const profile = (req, res) => {
     res.json(user);
 };
 
+const updateProfile = async (req, res) => {
+
+    const profile = await Artist.findById(req.params.id);
+
+    if(!profile) {
+        const error = new Error('Something bad occurs!');
+        return res.status(400).json({ msg: error.message });
+    }
+
+    if(profile.email !== req.body.email) {
+        const isEmailExisted = await Artist.findOne({ email: req.body.email });
+        if(isEmailExisted) {
+            const error = new Error('That email is used by someone else');
+            return res.status(400).json({ msg: error.message });
+        } 
+    }
+
+    try {
+        profile.name = req.body.name || profile.name;
+        profile.email = req.body.email || profile.email;
+        profile.genre = req.body.genre || profile.genre;
+
+        const userUpdated = await profile.save();
+        res.json(userUpdated);
+
+    } catch (error) {
+        console.log(error);
+    }
+
+};
+
 export {
     signup,
     profile,
@@ -235,5 +266,6 @@ export {
     authenticate,
     forgotPassword,
     checkToken,
-    setNewPassword
+    setNewPassword,
+    updateProfile
 }

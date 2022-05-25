@@ -6,7 +6,7 @@ import ListSongs from '../components/ListSongs';
 
 const DashArtist = () => {
 
-  const { auth } = useAuth();
+  const { auth, editProfile } = useAuth();
 
   return (
     <div className="flex flex-col justify-center items-center gap-8">
@@ -21,7 +21,7 @@ const DashArtist = () => {
           </div>
 
           <div>
-            <FormUpdate auth={auth} />
+            <FormUpdate auth={auth} editProfile={editProfile} />
           </div>
         </div>
 

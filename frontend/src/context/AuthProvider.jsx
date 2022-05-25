@@ -42,6 +42,32 @@ const AuthProvider = ({children}) => {
         setAuth({});
     };
 
+    const editProfile = async profile => {
+        const token = localStorage.getItem('MS_token_session');
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+        try {
+            const url = `/profiles/users/${profile.id}`;
+            const { data } = await clientAxios.put(url, profile, config);
+
+            return {
+                error: false
+            }
+            
+        } catch (error) {
+            return {
+                msg: error.response.data.msg,
+                error: true
+            }
+        }
+    };
+
     return (
         <AuthContext.Provider
             // Value is a prop that defines all states or components that are going to be available on all app
@@ -49,7 +75,8 @@ const AuthProvider = ({children}) => {
                 auth,
                 setAuth,
                 loading,
-                logOut
+                logOut,
+                editProfile
             }}
         >
             {children}

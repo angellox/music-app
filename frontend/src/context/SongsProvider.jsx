@@ -9,7 +9,10 @@ export const SongsProvider = ({ children }) => {
     const token = localStorage.getItem('MS_token_session');
 
     useEffect(() => {
+        const token = localStorage.getItem('MS_token_session');
+        
         const getSongsByArtist = async () => {
+            
             try {
                 if (!token) return;
 
@@ -27,7 +30,9 @@ export const SongsProvider = ({ children }) => {
                 console.log(error.response.data.msg);
             }
         };
+
         getSongsByArtist();
+
     }, []);
 
     const addSong = async (song) => {

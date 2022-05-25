@@ -6,7 +6,8 @@ import {
     authenticate, 
     forgotPassword, 
     checkToken, 
-    setNewPassword
+    setNewPassword,
+    updateProfile
 } from '../controllers/profileController.js'; 
 
 import checkAuth from '../middleware/authMiddleware.js';
@@ -21,5 +22,6 @@ router.route('/forgotten-password/:rol/:token').get(checkToken).post(setNewPassw
 
 // Private area (for access users only)
 router.get('/users', checkAuth, profile);
+router.put('/users/:id', checkAuth, updateProfile);
 
 export default router;

@@ -35,8 +35,8 @@ const upload = multer({
     fileFilter,
     limits: { fileSize: 1024 * 1024 * 1 } // Accepting 1MB for each photo, 
 });
-const uploadSimpleImage = upload.single('photo');
 
+const uploadSimpleImage = upload.single('photo');
 const signup = async (req, res) => {
 
     uploadSimpleImage(req, res, async err => {
@@ -230,32 +230,33 @@ const profile = (req, res) => {
 
 const updateProfile = async (req, res) => {
 
-    const profile = await Artist.findById(req.params.id);
 
-    if(!profile) {
-        const error = new Error('Something bad occurs!');
-        return res.status(400).json({ msg: error.message });
-    }
+        const profile = await Artist.findById(req.params.id);
 
-    if(profile.email !== req.body.email) {
-        const isEmailExisted = await Artist.findOne({ email: req.body.email });
-        if(isEmailExisted) {
-            const error = new Error('That email is used by someone else');
+        if(!profile) {
+            const error = new Error('Something bad occurs!');
             return res.status(400).json({ msg: error.message });
+        }
+
+        if(profile.email !== req.body.email) {
+            const isEmailExisted = await Artist.findOne({ email: req.body.email });
+            if(isEmailExisted) {
+                const error = new Error('That email is used by someone else');
+                return res.status(400).json({ msg: error.message });
+            } 
+        }
+
+        try {
+            profile.name = req.body.name || profile.name;
+            profile.email = req.body.email || profile.email;
+            profile.genre = req.body.genre || profile.genre;
+
+            const userUpdated = await profile.save();
+            res.json(userUpdated);
+
+        } catch (error) {
+            console.log(error);
         } 
-    }
-
-    try {
-        profile.name = req.body.name || profile.name;
-        profile.email = req.body.email || profile.email;
-        profile.genre = req.body.genre || profile.genre;
-
-        const userUpdated = await profile.save();
-        res.json(userUpdated);
-
-    } catch (error) {
-        console.log(error);
-    }
 
 };
 

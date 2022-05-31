@@ -54,6 +54,7 @@ const AuthProvider = ({children}) => {
 
         try {
             const url = `/profiles/users/${profile.id}`;
+
             const { data } = await clientAxios.put(url, profile, config);
 
             return {

@@ -2,22 +2,25 @@ import { useEffect, useState } from 'react';
 // Import internal components
 import Genres from './Genres';
 import Alert from './Alert';
+import Song from './Song';
 
-const FormUpdate = ({ auth, editProfile }) => {
+const FormUpdate = ({ auth, editProfile, photo }) => {
 
     const [name, setName] = useState(auth.name);
     const [email, setEmail] = useState(auth.email);
     const [genre, setGenre] = useState(auth.genre);
+    
     const [isDisabled, setIsDisabled] = useState(true);
 
     const [alert, setAlert] = useState({});
-    const user = { id: auth._id, name, email, genre };
-
+    const user = { id: auth._id, name, email, genre, photo };
+    
     const handleSubmit = async e => {
         // Just to update user data
         e.preventDefault();
-        
-        if([name, email, genre].includes('')){
+
+        //console.log(user);
+        if ([name, email, genre].includes('')) {
             setAlert({
                 msg: 'There are empty field. Please fill correctly!',
                 error: true
@@ -27,7 +30,7 @@ const FormUpdate = ({ auth, editProfile }) => {
 
         const result = await editProfile(user);
 
-        if(!result.error) {
+        if (!result.error) {
             setAlert({
                 msg: 'Your changes were updated successfully',
                 error: false
@@ -43,17 +46,18 @@ const FormUpdate = ({ auth, editProfile }) => {
 
     useEffect(() => {
 
-        if(
-            user.name !== auth.name || 
-            user.email !== auth.email || 
-            user.genre !== auth.genre
-        ){
+        if (
+            user.name !== auth.name ||
+            user.email !== auth.email ||
+            user.genre !== auth.genre ||
+            photo
+        ) {
             setIsDisabled(false);
             return;
         }
 
         setIsDisabled(true);
-        
+
     }, [user]);
 
     return (
@@ -92,7 +96,7 @@ const FormUpdate = ({ auth, editProfile }) => {
                 </div>
 
                 <button
-                    className={isDisabled ? `bg-cream-500 text-white p-2 px-4 rounded-md hover:bg-cream-700 transition-all mt-10 float-right hover:cursor-not-allowed` : `bg-cream-500 text-white p-2 px-4 rounded-md hover:bg-cream-700 transition-all mt-10 float-right hover:cursor-pointer` }
+                    className={isDisabled ? `bg-cream-500 text-white p-2 px-4 rounded-md hover:bg-cream-700 transition-all mt-10 float-right hover:cursor-not-allowed` : `bg-cream-500 text-white p-2 px-4 rounded-md hover:bg-cream-700 transition-all mt-10 float-right hover:cursor-pointer`}
                     type="submit"
                     disabled={isDisabled}
                 >

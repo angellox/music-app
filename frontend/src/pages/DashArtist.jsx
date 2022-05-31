@@ -1,19 +1,30 @@
+import { useEffect, useState } from 'react';
 import useAuth from '../hooks/useAuth';
+import useSongs from '../hooks/useSongs';
 // Import components
 import FormUpdate from '../components/FormUpdate';
 import FormSongs from '../components/FormSongs';
 import ListSongs from '../components/ListSongs';
+// Import images
 
 const DashArtist = () => {
 
+  const { songs } = useSongs();
   const { auth, editProfile } = useAuth();
+  const imageProfile = import.meta.env.VITE_BACKEND_URL + "/" + auth.photo;
+
 
   return (
     <div className="flex flex-col justify-center items-center gap-8">
       <div className="flex flex-col justify-between md:flex-row w-full md:w-3/4 gap-8">
         <div className="bg-white rounded-lg p-6 md:w-4/6 shadow-md">
           <div className="flex gap-6 items-center mb-10">
-            <div className="bg-no-repeat bg-center bg-cover h-20 w-20 rounded-full" style={{ backgroundImage: `url(${import.meta.env.VITE_BACKEND_URL + "/" + auth.photo})` }}></div>
+
+            <div>
+              <label className='relative'>
+                <div className='bg-no-repeat bg-center bg-cover h-20 w-20 rounded-full hover:cursor-pointer' style={{ backgroundImage: `url(${imageProfile})` }}></div>
+              </label>
+            </div>
             <div className=" text-gray-800 text-2xl">
               <h2>Welcome, {auth.name}!</h2>
               <p className="text-sm text-gray-400">Edit your profile here</p>
@@ -21,7 +32,10 @@ const DashArtist = () => {
           </div>
 
           <div>
-            <FormUpdate auth={auth} editProfile={editProfile} />
+            <FormUpdate
+              auth={auth}
+              editProfile={editProfile}
+            />
           </div>
         </div>
 
@@ -40,7 +54,7 @@ const DashArtist = () => {
               </svg>
 
               <div>
-                <p className="text-xl">1,543,241</p>
+                <p className="text-xl">{songs.reduce( (prevPlay, currPlay) => prevPlay + currPlay.plays, 0)}</p>
                 <p className="text-sm text-gray-400">Total plays</p>
               </div>
             </div>
@@ -52,7 +66,7 @@ const DashArtist = () => {
               </svg>
 
               <div>
-                <p className="text-xl">2,555</p>
+                <p className="text-xl">{songs.reduce( (prevLike, currLike) => prevLike + currLike.likes, 0)}</p>
                 <p className="text-sm text-gray-400">Total likes</p>
               </div>
             </div>
@@ -68,7 +82,7 @@ const DashArtist = () => {
               </svg>
 
               <div>
-                <p className="text-xl">543</p>
+                <p className="text-xl">{songs.length}</p>
                 <p className="text-sm text-gray-400">Total tracks</p>
               </div>
             </div>
@@ -77,13 +91,13 @@ const DashArtist = () => {
       </div>
 
       <div className="bg-white rounded-lg p-6 w-full md:w-3/4 shadow-md">
-          <div className=" text-gray-800 text-2xl">
-            <h2>Upload tracks</h2>
-            <p className="text-sm text-gray-400 mb-5">Upload your tracks here (Formats supported: .mp3 only)</p>
-          </div>
+        <div className=" text-gray-800 text-2xl">
+          <h2>Upload tracks</h2>
+          <p className="text-sm text-gray-400 mb-5">Upload your tracks here (Formats supported: .mp3 only)</p>
+        </div>
 
-          <FormSongs />
-          <ListSongs />
+        <FormSongs />
+        <ListSongs />
       </div>
 
     </div>
